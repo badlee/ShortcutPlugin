@@ -99,7 +99,7 @@ public class ShortcutPlugin extends CordovaPlugin {
                     shortcutintent.putExtra(Intent.EXTRA_SHORTCUT_ICON, decodeBase64(iconBase64));
                 }
 
-                shortcutintent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, i);
+                //shortcutintent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, i);
                 context.sendBroadcast(shortcutintent);
 
                 callbackContext.success();
