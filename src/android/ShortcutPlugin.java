@@ -25,10 +25,8 @@ public class ShortcutPlugin extends CordovaPlugin {
     @Override
     public boolean execute(String action, JSONArray args,
                            CallbackContext callbackContext) throws JSONException {
-
         try {
             if (ACTION_ADD_SHORTCUT.equals(action)) {
-
                 // Get params
                 JSONObject arg_object = args.getJSONObject(0);
 
@@ -48,7 +46,7 @@ public class ShortcutPlugin extends CordovaPlugin {
                     activityPackage = arg_object.getString("activityPackage");
                 }
 
- 				if (arg_object.has("extraSubject")) {
+                if (arg_object.has("extraSubject")) {
                     extraSubject = arg_object.getString("extraSubject");
                 }
 
@@ -68,18 +66,19 @@ public class ShortcutPlugin extends CordovaPlugin {
                 i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
                 if(extraSubject != null){
-                	i.putExtra(Intent.EXTRA_SUBJECT, extraSubject);
-		}
+                    i.putExtra(Intent.EXTRA_SUBJECT, extraSubject);
+                }
 
-		String urlStr = "https://www.naver.com";
-		String appName = "NAVER!";
-		    
+                String urlStr = "https://www.naver.com";
+                String appName = "NAVER!";
+
                 Intent uriIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(urlStr));
                 Intent shortcutintent = new Intent();
-		    
+
                 shortcutintent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, uriIntent);
                 shortcutintent.putExtra(Intent.EXTRA_SHORTCUT_NAME, appName);
                 shortcutintent.putExtra("duplicate", false);
+                intent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
 
 /*
                 Intent shortcutintent = new Intent("com.android.launcher.action.INSTALL_SHORTCUT");
