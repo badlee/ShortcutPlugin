@@ -12,7 +12,7 @@ ShortcutPlugin.prototype.CreateShortcut = function (data, successCallback, error
     };
   }
 
-  if (typeof data !== 'object' || typeof data.text !== 'string') {
+  if (typeof data !== 'object' || typeof data.name !== 'string' || typeof data.url !== 'string') {
     errorCallback('required text is not set or not a string');
     return;
   }
@@ -23,17 +23,6 @@ ShortcutPlugin.prototype.CreateShortcut = function (data, successCallback, error
     'ShortcutPlugin',
     'addShortcut',
     [data]
-  );
-};
-ShortcutPlugin.prototype.RemoveShortcut = function (shortcut_text, successCallback, errorCallback) {
-  cordova.exec(
-    successCallback,
-    errorCallback,
-    'ShortcutPlugin',
-    'delShortcut',
-    [{
-      "shortcuttext": shortcut_text
-    }]
   );
 };
 
