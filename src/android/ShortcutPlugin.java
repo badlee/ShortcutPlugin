@@ -29,17 +29,14 @@ public class ShortcutPlugin extends CordovaPlugin {
             // set param defaults
             String shortcutName = arg_object.getString("name");
             String shortcutUrl = arg_object.getString("url");
-            String shortcutIcon = arg_object.getString("icon");
+            String shortcutIcon = null;
+
+            if (arg_object.has("icon")) {
+                shortcutIcon = arg_object.getString("icon");
+            }
 
             Context context = this.cordova.getActivity().getApplicationContext();
             PackageManager pm = context.getPackageManager();
-
-            if(shortcutUrl == null) {
-                shortcutUrl = "https://www.naver.com";
-            }
-            if(shortcutIcon == null) {
-                // TODO
-            }
 
             Intent intent = new Intent();
 
