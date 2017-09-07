@@ -34,10 +34,10 @@ public class ShortcutPlugin extends CordovaPlugin {
             Context context = this.cordova.getActivity().getApplicationContext();
             PackageManager pm = context.getPackageManager();
 
-            if(shortcutUrl == "") {
+            if(shortcutUrl == null) {
                 shortcutUrl = "https://www.naver.com";
             }
-            if(shortcutIcon == "") {
+            if(shortcutIcon == null) {
                 // TODO
             }
 
@@ -52,12 +52,18 @@ public class ShortcutPlugin extends CordovaPlugin {
 
             // Get Shortcut Icon
             if (shortcutIcon == null) {
+                Intent i = new Intent();
+                i.setClassName(this.cordova.getActivity().getPackageName(),     
+                               this.cordova.getActivity().getClass().getName());
+                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);     
+                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
                 ResolveInfo ri = pm.resolveActivity(i, 0);
                 int iconId = ri.activityInfo.applicationInfo.icon;
                 Parcelable icon = Intent.ShortcutIconResource.fromContext(context, iconId);
                 intent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE, icon);
             } else {
-                //Bitmap bmpIcon = decodeBase64(iconBase64);
+                //Bitmap bmpIcon = decodeBase64(shortcutIcon);
                 //Bitmap scaledBitmap = Bitmap.createScaledBitmap(bmpIcon, 128, 128, true);
                 //intent.putExtra(Intent.EXTRA_SHORTCUT_ICON, scaledBitmap);
                 intent.putExtra(Intent.EXTRA_SHORTCUT_ICON, decodeBase64(shortcutIcon));
