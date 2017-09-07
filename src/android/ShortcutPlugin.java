@@ -78,7 +78,7 @@ public class ShortcutPlugin extends CordovaPlugin {
                 shortcutintent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, uriIntent);
                 shortcutintent.putExtra(Intent.EXTRA_SHORTCUT_NAME, appName);
                 shortcutintent.putExtra("duplicate", false);
-                intent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
+                shortcutintent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
 
 /*
                 Intent shortcutintent = new Intent("com.android.launcher.action.INSTALL_SHORTCUT");
