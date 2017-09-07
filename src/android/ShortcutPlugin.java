@@ -16,6 +16,7 @@ import android.content.Context;
 import android.os.Parcelable;
 import android.content.pm.ResolveInfo;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 
 public class ShortcutPlugin extends CordovaPlugin {
     public static final String ACTION_ADD_SHORTCUT = "addShortcut";
@@ -68,14 +69,21 @@ public class ShortcutPlugin extends CordovaPlugin {
 
                 if(extraSubject != null){
                 	i.putExtra(Intent.EXTRA_SUBJECT, extraSubject);
-				}
+		}
 
-                Intent shortcutintent = new Intent(
-                        "com.android.launcher.action.INSTALL_SHORTCUT");
+		String urlStr = "https://www.naver.com";
+		String appName = "NAVER!";
+                Intent uriIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(urlStr));
+                Intent shortcutintent = new Intent();
+                shortcutintent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
+                shortcutintent.putExtra(Intent.EXTRA_SHORTCUT_NAME, appName);
                 shortcutintent.putExtra("duplicate", false);
-                shortcutintent.putExtra(Intent.EXTRA_SHORTCUT_NAME,
-                        shortcuttext);
 
+/*
+                Intent shortcutintent = new Intent("com.android.launcher.action.INSTALL_SHORTCUT");
+                shortcutintent.putExtra("duplicate", false);
+                shortcutintent.putExtra(Intent.EXTRA_SHORTCUT_NAME, shortcuttext);
+*/
                 // Get Icon
                 if (iconBase64 == null) {
                     ResolveInfo ri = pm.resolveActivity(i, 0);
