@@ -73,9 +73,11 @@ public class ShortcutPlugin extends CordovaPlugin {
 
 		String urlStr = "https://www.naver.com";
 		String appName = "NAVER!";
+		    
                 Intent uriIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(urlStr));
                 Intent shortcutintent = new Intent();
-                shortcutintent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
+		    
+                shortcutintent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, uriIntent);
                 shortcutintent.putExtra(Intent.EXTRA_SHORTCUT_NAME, appName);
                 shortcutintent.putExtra("duplicate", false);
 
