@@ -19,112 +19,57 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 
 public class ShortcutPlugin extends CordovaPlugin {
-    public static final String ACTION_ADD_SHORTCUT = "addShortcut";
-    public static final String ACTION_DEL_SHORTCUT = "delShortcut";
-
     @Override
     public boolean execute(String action, JSONArray args,
                            CallbackContext callbackContext) throws JSONException {
         try {
-            if (ACTION_ADD_SHORTCUT.equals(action)) {
-                // Get params
-                JSONObject arg_object = args.getJSONObject(0);
+            // Get params
+            JSONObject arg_object = args.getJSONObject(0);
 
-                // set param defaults
-                String shortcuttext = arg_object.getString("text");
-                String iconBase64 = null;
-                String activityClass = null;
-                String activityPackage = null;
-                String extraSubject = null;
+            // set param defaults
+            String shortcutName = arg_object.getString("name");
+            String shortcutUrl = arg_object.getString("url");
+            String shortcutIcon = arg_object.getString("icon");
 
-                if (arg_object.has("icon")) {
-                    iconBase64 = arg_object.getString("icon");
-                }
+            Context context = this.cordova.getActivity().getApplicationContext();
+            PackageManager pm = context.getPackageManager();
 
-                if (arg_object.has("activityClass") & arg_object.has("activityPackage")) {
-                    activityClass = arg_object.getString("activityClass");
-                    activityPackage = arg_object.getString("activityPackage");
-                }
-
-                if (arg_object.has("extraSubject")) {
-                    extraSubject = arg_object.getString("extraSubject");
-                }
-
-                Context context = this.cordova.getActivity()
-                        .getApplicationContext();
-                PackageManager pm = context.getPackageManager();
-
-                Intent i = new Intent();
-                if (activityClass == null) {
-                    i.setClassName(this.cordova.getActivity().getPackageName(),
-                            this.cordova.getActivity().getClass().getName());
-                } else {
-                    i.setClassName(activityPackage, activityClass);
-                }
-
-                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-
-                if(extraSubject != null){
-                    i.putExtra(Intent.EXTRA_SUBJECT, extraSubject);
-                }
-
-                String urlStr = "https://www.naver.com";
-                String appName = "NAVER!";
-
-                Intent uriIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(urlStr));
-                Intent shortcutintent = new Intent();
-
-                shortcutintent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, uriIntent);
-                shortcutintent.putExtra(Intent.EXTRA_SHORTCUT_NAME, appName);
-                shortcutintent.putExtra("duplicate", false);
-                shortcutintent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
-
-/*
-                Intent shortcutintent = new Intent("com.android.launcher.action.INSTALL_SHORTCUT");
-                shortcutintent.putExtra("duplicate", false);
-                shortcutintent.putExtra(Intent.EXTRA_SHORTCUT_NAME, shortcuttext);
-*/
-                // Get Icon
-                if (iconBase64 == null) {
-                    ResolveInfo ri = pm.resolveActivity(i, 0);
-                    int iconId = ri.activityInfo.applicationInfo.icon;
-                    Parcelable icon = Intent.ShortcutIconResource.fromContext(
-                            context, iconId);
-                    shortcutintent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE, icon);
-                } else {
-                    //Bitmap bmpIcon = decodeBase64(iconBase64);
-                    //Bitmap scaledBitmap = Bitmap.createScaledBitmap(bmpIcon, 128, 128, true);
-                    //shortcutintent.putExtra(Intent.EXTRA_SHORTCUT_ICON, scaledBitmap);
-                    shortcutintent.putExtra(Intent.EXTRA_SHORTCUT_ICON, decodeBase64(iconBase64));
-                }
-
-                //shortcutintent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, i);
-                context.sendBroadcast(shortcutintent);
-
-                callbackContext.success();
-                return true;
-            } else if (ACTION_DEL_SHORTCUT.equals(action)) {
-                JSONObject arg_object = args.getJSONObject(0);
-                Context context = this.cordova.getActivity()
-                        .getApplicationContext();
-
-                Intent i = new Intent();
-                i.setClassName(this.cordova.getActivity().getPackageName(),
-                        this.cordova.getActivity().getClass().getName());
-                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-
-                Intent shortcutintent = new Intent(
-                        "com.android.launcher.action.UNINSTALL_SHORTCUT");
-                shortcutintent.putExtra(Intent.EXTRA_SHORTCUT_NAME,
-                        arg_object.getString("shortcuttext"));
-                shortcutintent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, i);
-                context.sendBroadcast(shortcutintent);
-                callbackContext.success();
+            if(shortcutUrl == "") {
+                shortcutUrl = "https://www.naver.com";
             }
-            callbackContext.error("Invalid action");
-            return false;
+            if(shortcutIcon == "") {
+                // TODO
+            }
+
+            Intent intent = new Intent();
+
+            // Get Shortcut URL
+            Intent shortcutIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(shortcutUrl));
+            intent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
+
+            // Get Shortcut Name
+            intent.putExtra(Intent.EXTRA_SHORTCUT_NAME, shortcutName);
+
+            // Get Shortcut Icon
+            if (shortcutIcon == null) {
+                ResolveInfo ri = pm.resolveActivity(i, 0);
+                int iconId = ri.activityInfo.applicationInfo.icon;
+                Parcelable icon = Intent.ShortcutIconResource.fromContext(context, iconId);
+                intent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE, icon);
+            } else {
+                //Bitmap bmpIcon = decodeBase64(iconBase64);
+                //Bitmap scaledBitmap = Bitmap.createScaledBitmap(bmpIcon, 128, 128, true);
+                //intent.putExtra(Intent.EXTRA_SHORTCUT_ICON, scaledBitmap);
+                intent.putExtra(Intent.EXTRA_SHORTCUT_ICON, decodeBase64(shortcutIcon));
+            }
+
+            intent.putExtra("duplicate", false);
+            intent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
+            context.sendBroadcast(intent);
+
+            callbackContext.success();
+            return true;
+
         } catch (Exception e) {
             System.err.println("Exception: " + e.getMessage());
             callbackContext.error(e.getMessage());
